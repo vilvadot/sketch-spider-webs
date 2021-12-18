@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<script src="https://cdn.jsdelivr.net/npm/@svgdotjs/svg.js@3.0/dist/svg.min.js"></script>
+	</head>
+	<body>
+		<style>
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+			}
+
+			body {
+				height: 100vh;
+				display: grid;
+				place-items: center;
+				background: hsl(0, 0%, 96%);
+			}
+
+			svg {
+				width: 75vmin;
+				height: 75vmin;
+				background: hsl(0, 0%, 100%);
+			}
+		</style>
+		<script type="module">
+			import { SVG } from "https://cdn.skypack.dev/@svgdotjs/svg.js";
+			import {
+				spline,
+				random,
+			} from "https://cdn.skypack.dev/@georgedoescode/generative-utils@1.0.0";
+
+			const half = (value) => value / 2;
+
+			const WIDTH = 300;
+			const HEIGHT = 300;
+			const draw = SVG()
+				.addTo("body")
+				.size(WIDTH, HEIGHT)
+				.viewbox(0, 0, WIDTH, HEIGHT);
+
+			var vertical = draw
+				.line(half(WIDTH), 0, half(WIDTH), HEIGHT)
+				.stroke({ color: "#f06", width: 2, linecap: "round" });
+
+			var horizontal = draw
+				.line(0, half(HEIGHT), WIDTH, half(HEIGHT))
+				.stroke({ color: "#f06", width: 1, linecap: "round" });
+
+			var diagonal = draw
+				.line(0, 0, WIDTH, HEIGHT)
+				.stroke({ color: "#f06", width: 1, linecap: "round" });
+
+			var diagonal = draw
+				.line(WIDTH, 0, 0, HEIGHT)
+				.stroke({ color: "#f06", width: 1, linecap: "round" });
+
+			const STEPS = 5;
+			const step = HEIGHT / STEPS;
+			const radius = 5;
+
+			const verticalAxis = [];
+			const horizontalAxis = [];
+
+			// Draw vertical points
+			for (let i = 0; i <= HEIGHT; i += step) {
+				const point = {
+					x: half(WIDTH),
+					y: i,
+				};
+				verticalAxis.push(point);
+			}
+			// Draw horizontal points
+			for (let i = 0; i <= WIDTH; i += step) {
+				const radius = 5;
+				const point = {
+					x: i,
+					y: half(HEIGHT),
+				};
+				horizontalAxis.push(point);
+			}
+
+			const drawCurveBetween = (A, B, offset = 30) => {
+				const midPointBetween = (A, B) => {
+					return {
+						x: (B.x + A.x) * 0.5,
+						y: (B.y + A.y) * 0.5,
+					};
+				};
+
+				const M = midPointBetween(A, B);
+				var theta = Math.atan2(B.y - A.y, B.x - A.x) - Math.PI / 2;
+
+				var C = {
+					x: M.x - offset * Math.cos(theta),
+					y: M.y - offset * Math.sin(theta),
+				};
+
+				var curve = `M${A.x} ${A.y} Q${C.x} ${C.y} ${B.x} ${B.y}`;
+
+				draw.path(curve).stroke("#f06").fill("none");
+			};
+
+			horizontalAxis.forEach((start, index) => {
+				const end = verticalAxis[index];
+				const distanceTocenter = Math.abs((STEPS) / 2 - index);
+				const offset = distanceTocenter * 20
+				drawCurveBetween(start, end, offset);
+			});
+
+			horizontalAxis.reverse().forEach((start, index) => {
+				const end = verticalAxis[index];
+				const distanceTocenter = Math.abs((STEPS) / 2 - index);
+				const offset = distanceTocenter * 20
+				drawCurveBetween(start, end, -offset);
+			});
+		</script>
+	</body>
+</html>
+
+0, 1, 2, 3, 4, 5, 6 M 3, 2, 1, 0 , 1, 2, 3 STEPS = 6 / 2 = 3
