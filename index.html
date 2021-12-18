@@ -5,7 +5,6 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Document</title>
-		<script src="https://cdn.jsdelivr.net/npm/@svgdotjs/svg.js@3.0/dist/svg.min.js"></script>
 	</head>
 	<body>
 		<style>
@@ -33,6 +32,7 @@
 			import {
 				spline,
 				random,
+				pointsInPath,
 			} from "https://cdn.skypack.dev/@georgedoescode/generative-utils@1.0.0";
 
 			const half = (value) => value / 2;
@@ -46,19 +46,21 @@
 
 			var vertical = draw
 				.line(half(WIDTH), 0, half(WIDTH), HEIGHT)
-				.stroke({ color: "#f06", width: 2, linecap: "round" });
+				.stroke({ color: "#f06", width: 1, linecap: "round" });
 
 			var horizontal = draw
 				.line(0, half(HEIGHT), WIDTH, half(HEIGHT))
 				.stroke({ color: "#f06", width: 1, linecap: "round" });
 
-			var diagonal = draw
+			var diagonalA = draw
 				.line(0, 0, WIDTH, HEIGHT)
 				.stroke({ color: "#f06", width: 1, linecap: "round" });
 
-			var diagonal = draw
+			var diagonalB = draw
 				.line(WIDTH, 0, 0, HEIGHT)
 				.stroke({ color: "#f06", width: 1, linecap: "round" });
+
+			const lines = [horizontal, diagonalA, vertical, diagonalB];
 
 			const STEPS = 5;
 			const step = HEIGHT / STEPS;
@@ -67,23 +69,29 @@
 			const verticalAxis = [];
 			const horizontalAxis = [];
 
-			// Draw vertical points
-			for (let i = 0; i <= HEIGHT; i += step) {
-				const point = {
-					x: half(WIDTH),
-					y: i,
-				};
-				verticalAxis.push(point);
-			}
-			// Draw horizontal points
-			for (let i = 0; i <= WIDTH; i += step) {
-				const radius = 5;
-				const point = {
-					x: i,
-					y: half(HEIGHT),
-				};
-				horizontalAxis.push(point);
-			}
+			const anchors = [];
+
+			lines.forEach((line) => {
+				anchors.push(pointsInPath(line.node, 15).map(({ x, y }) => ({ x, y })));
+			});
+
+			// // Draw vertical points
+			// for (let i = 0; i <= HEIGHT; i += step) {
+			// 	const point = {
+			// 		x: half(WIDTH),
+			// 		y: i,
+			// 	};
+			// 	verticalAxis.push(point);
+			// }
+			// // Draw horizontal points
+			// for (let i = 0; i <= WIDTH; i += step) {
+			// 	const radius = 5;
+			// 	const point = {
+			// 		x: i,
+			// 		y: half(HEIGHT),
+			// 	};
+			// 	horizontalAxis.push(point);
+			// }
 
 			const drawCurveBetween = (A, B, offset = 30) => {
 				const midPointBetween = (A, B) => {
@@ -106,19 +114,29 @@
 				draw.path(curve).stroke("#f06").fill("none");
 			};
 
-			horizontalAxis.forEach((start, index) => {
-				const end = verticalAxis[index];
-				const distanceTocenter = Math.abs((STEPS) / 2 - index);
-				const offset = distanceTocenter * 20
-				drawCurveBetween(start, end, offset);
+			anchors.forEach((points, index) => {
+				points.forEach((point, pointIndex) => {
+					const start = point;
+					const end = anchors[index + 1][pointIndex];
+					const distanceTocenter = Math.abs(STEPS / 2 - index);
+					const offset = distanceTocenter * 20;
+					drawCurveBetween(start, end, offset);
+				});
 			});
 
-			horizontalAxis.reverse().forEach((start, index) => {
-				const end = verticalAxis[index];
-				const distanceTocenter = Math.abs((STEPS) / 2 - index);
-				const offset = distanceTocenter * 20
-				drawCurveBetween(start, end, -offset);
-			});
+			// horizontalAxis.forEach((start, index) => {
+			// 	const end = verticalAxis[index];
+			// 	const distanceTocenter = Math.abs(STEPS / 2 - index);
+			// 	const offset = distanceTocenter * 20;
+			// 	drawCurveBetween(start, end, offset);
+			// });
+
+			// horizontalAxis.reverse().forEach((start, index) => {
+			// 	const end = verticalAxis[index];
+			// 	const distanceTocenter = Math.abs(STEPS / 2 - index);
+			// 	const offset = distanceTocenter * 20;
+			// 	drawCurveBetween(start, end, -offset);
+			// });
 		</script>
 	</body>
 </html>

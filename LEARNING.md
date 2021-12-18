@@ -1,0 +1,4 @@
+- How Spider webs are constructed
+- How paths work
+- How to obtain the midpoint between two points
+- How to create a new point offset an specific amount in the bisecting angle between two points
