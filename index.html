@@ -4,7 +4,7 @@
 		<meta charset="UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Document</title>
+		<title>Spider web generator</title>
 	</head>
 	<body>
 		<style>
@@ -34,94 +34,49 @@
 				random,
 				pointsInPath,
 			} from "https://cdn.skypack.dev/@georgedoescode/generative-utils@1.0.0";
-
-			const half = (value) => value / 2;
+			import { findPointInCircle, half, calculateCurve } from "./utils.js";
 
 			const WIDTH = 300;
 			const HEIGHT = 300;
+			const CENTER = { x: half(WIDTH), y: half(HEIGHT) };
+			const AXEL_QUANTITY = 25;
+			const STEPS = 5;
+			const WEB_TENSION = 1
+
 			const draw = SVG()
 				.addTo("body")
 				.size(WIDTH, HEIGHT)
 				.viewbox(0, 0, WIDTH, HEIGHT);
 
-			const CENTER = { x: half(WIDTH), y: half(HEIGHT) };
+			// Draw axels radiating from the center
+			const axels = [];
+			const angleIncrement = 360 / AXEL_QUANTITY;
+			for (let angle = 0; angle <= 360; angle += angleIncrement) {
+				const end = findPointInCircle(CENTER.x, CENTER.y, 200, angle);
 
-			var horizontalLeft = draw
-				.line(CENTER.x, CENTER.y, 0, CENTER.y)
-				.stroke({ color: "blue", width: 1, linecap: "round" });
+				const line = draw
+					.line(CENTER.x, CENTER.y, end.x, end.y)
+					.stroke({ color: "blue", width: 1, linecap: "round" });
 
-			var diagonalA = draw
-				.line(CENTER.x, CENTER.y, 0, 0)
-				.stroke({ color: "blue", width: 1, linecap: "round" });
+				axels.push(line);
+			}
 
-			var verticalTop = draw
-				.line(CENTER.x, CENTER.y, CENTER.x, 0)
-				.stroke({ color: "blue", width: 1, linecap: "round" });
-
-			var diagonalB = draw
-				.line(CENTER.x, CENTER.y, WIDTH, 0)
-				.stroke({ color: "blue", width: 1, linecap: "round" });
-
-			var horizontalright = draw
-				.line(CENTER.x, CENTER.y, WIDTH, CENTER.x)
-				.stroke({ color: "blue", width: 1, linecap: "round" });
-
-			var diagonalC = draw
-				.line(CENTER.x, CENTER.y, WIDTH, HEIGHT)
-				.stroke({ color: "blue", width: 1, linecap: "round" });
-
-			var verticalBottom = draw
-				.line(CENTER.x, CENTER.y, CENTER.x, HEIGHT)
-				.stroke({ color: "blue", width: 1, linecap: "round" });
-
-			var diagonalD = draw
-				.line(CENTER.x, CENTER.y, 0, HEIGHT)
-				.stroke({ color: "blue", width: 1, linecap: "round" });
-
-			const lines = [horizontalLeft, diagonalA, verticalTop, diagonalB, horizontalright, diagonalC, verticalBottom, diagonalD, horizontalLeft];
-
-			const STEPS = 5;
-			const step = HEIGHT / STEPS;
-			const radius = 5;
-
-			const verticalAxis = [];
-			const horizontalAxis = [];
-
+			// Split each axel into N anchors to stick web to
 			const anchors = [];
-
-			lines.forEach((line) => {
-				anchors.push(pointsInPath(line.node, 15).map(({ x, y }) => ({ x, y })));
+			axels.forEach((line) => {
+				const points = pointsInPath(line.node, 15).map(({ x, y }) => ({ x, y }))
+				anchors.push(points);
 			});
 
-			const drawCurveBetween = (A, B, offset = 30) => {
-				const midPointBetween = (A, B) => {
-					return {
-						x: (B.x + A.x) * 0.5,
-						y: (B.y + A.y) * 0.5,
-					};
-				};
+			anchors.forEach((points, axelIndex) => {
+				points.forEach((start, pointIndex) => {
+					if (!anchors[axelIndex + 1]) return;
 
-				const M = midPointBetween(A, B);
-				var theta = Math.atan2(B.y - A.y, B.x - A.x) - Math.PI / 2;
+					const end = anchors[axelIndex + 1][pointIndex];
+					const tension = pointIndex * WEB_TENSION;
+					const curve = calculateCurve(start, end, tension);
 
-				var C = {
-					x: M.x - offset * Math.cos(theta),
-					y: M.y - offset * Math.sin(theta),
-				};
-
-				var curve = `M${A.x} ${A.y} Q${C.x} ${C.y} ${B.x} ${B.y}`;
-
-				draw.path(curve).stroke("#f06").fill("none");
-			};
-
-			anchors.forEach((points, index) => {
-				points.forEach((point, pointIndex) => {
-					const start = point;
-					if(!anchors[index + 1]) return
-					const end = anchors[index + 1][pointIndex];
-					const distanceTocenter = Math.abs(STEPS / 2 - index);
-					const offset = pointIndex * 2;
-					drawCurveBetween(start, end, offset);
+					draw.path(curve).stroke("#f06").fill("none");
 				});
 			});
 		</script>
