@@ -1,5 +1,11 @@
 export const half = (value) => value / 2;
 
+export const roll = (probability = .5) => {
+  const diceRoll = Math.random();
+  if (diceRoll <= probability) return true;
+  return false;
+};
+
 export const findPointInCircle = (x, y, distance = 100, angleInDegrees) => {
   var radians = (angleInDegrees * Math.PI) / 180;
 
