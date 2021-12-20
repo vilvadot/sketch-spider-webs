@@ -10,7 +10,6 @@ const HEIGHT = 300;
 const COLOR = "black";
 const THICKNESS = 0.3;
 
-// Random parameters
 const RADII = parseInt(random(10, 45));
 const WEB_TENSION = () => random(0.3, 1);
 const ANCHOR_QUANTITY = random(10, 30);
@@ -24,18 +23,18 @@ const draw = SVG()
   .size(WIDTH, HEIGHT)
   .viewbox(0, 0, WIDTH, HEIGHT);
 
-// Draw axels radiating from the center
-const axels = [];
+// Draw axes radiating starting at 9 o'clock going clockwise
+const axes = [];
 const angleIncrement = 360 / RADII;
 for (let angle = 0; angle <= 360; angle += angleIncrement * random(0.5, 1.5)) {
-  const AXEL_LENGTH = random(60, 150);
+  let AXEL_LENGTH = random(60, 150);
   const end = findPointInCircle(CENTER.x, CENTER.y, AXEL_LENGTH, angle);
 
   const line = draw
     .line(CENTER.x, CENTER.y, end.x, end.y)
     .stroke({ color: COLOR, width: THICKNESS, linecap: "round" });
 
-  // Draw supporting web strand 25% of times
+  // Only 25% of axes are supporting the web to the environment. Draw them on top
   const isAnchoringWeb = roll(0.25);
   if (isAnchoringWeb) {
     const supportEnd = findPointInCircle(CENTER.x, CENTER.y, 500, angle);
@@ -44,15 +43,15 @@ for (let angle = 0; angle <= 360; angle += angleIncrement * random(0.5, 1.5)) {
       .stroke({ color: COLOR, width: THICKNESS, linecap: "round" });
   }
 
-  axels.push(line);
+  axes.push(line);
 }
 
-// Close web by repeating first axel as last
-axels.push(axels[0]);
+// Close web by repeating first axel as last. Curiosly I have seen my spider does not always do this
+axes.push(axes[0]);
 
-// Split each axel into N anchors to stick web to
+// Split each axel into N anchors to stick web to them and build concentric circles
 const anchors = [];
-axels.forEach((line) => {
+axes.forEach((line) => {
   // Add endpoint so that web closes on the edges
   const end = {
     x: line.node.getAttribute("x2"),

@@ -4,7 +4,8 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Spider web generator</title>
+    <link rel="icon" type="image/x-icon" href="./favicon.ico" />
+    <title>Spider Web Generator</title>
     <style>
       * {
         font-family: monospace;
@@ -13,12 +14,20 @@
         box-sizing: border-box;
       }
 
-			#abstract{
-				max-width: 150px;
-				position: absolute;
-				left: 50px;
-				top: 100px;
-			}
+      #abstract {
+        max-width: 150px;
+        position: absolute;
+        left: 50px;
+        top: 100px;
+      }
+
+      #back-icon{
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        font-size: 30px;
+        text-decoration: none;
+      }
 
       body {
         height: 100vh;
@@ -35,19 +44,29 @@
     </style>
   </head>
   <body>
+    <a
+      id="back-icon"
+      className="icon-link"
+      target="_blank"
+      href="https://vilva.io/sketches"
+    >
+      <span>←</span>
+    </a>
     <p id="abstract">
       A spider recently installed on my yard. She spun a beautiful web in the
       corner of a gazebo here, every day the wind would eventually destroy the
       web, and every day she would spin it again, always the same design but
-      with slight differences. 
-			<br/>
-			<br/>
-			This got me really inspired to try and replicate her process with the aid of code.
-			<br/>
-			<br/>
-			Every time you refresh, the wind sweps away your web and the spider spins it again.
-			<br/><br/>
-			<a href="https://github.com/vilvadot">Process + Code here</a>
+      with slight differences.
+      <br />
+      <br />
+      This got me really inspired to try and replicate her process with the aid
+      of code.
+      <br />
+      <br />
+      Every time you refresh, the wind sweps away your web and the spider spins
+      it again.
+      <br /><br />
+      <a href="https://vilva.io/blog/sketch-2-spinning-webs/">Process + Code here</a>
     </p>
     <div id="sketch"></div>
     <script type="module" src="./generator.js"></script>

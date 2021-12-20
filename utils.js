@@ -6,6 +6,7 @@ export const roll = (probability = .5) => {
   return false;
 };
 
+// https://stackoverflow.com/questions/32921322/=svg-marker-can-i-set-length-and-angle
 export const findPointInCircle = (x, y, distance = 100, angleInDegrees) => {
   var radians = (angleInDegrees * Math.PI) / 180;
 
@@ -22,6 +23,7 @@ const midPointBetween = (pointA, pointB) => {
   };
 };
 
+// https://stackoverflow.com/questions/49274176/how-to-create-a-curved-svg-path-between-two-points
 export const calculateCurve = (pointA, pointB, offset = 30) => {
   const midpoint = midPointBetween(pointA, pointB);
   var theta = Math.atan2(pointB.y - pointA.y, pointB.x - pointA.x) - Math.PI / 2;
