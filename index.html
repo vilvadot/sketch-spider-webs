@@ -21,6 +21,12 @@
         top: 100px;
       }
 
+      @media only screen and (max-width: 600px) {
+        #abstract{
+          display: none;
+        }
+      }
+
       #back-icon{
         position: absolute;
         top: 20px;
@@ -36,10 +42,31 @@
         background: hsl(0, 0%, 96%);
       }
 
-      svg {
+      #sketch{
         width: 75vmin;
         height: 75vmin;
+      }
+
+      svg {
+        width: 100%;
+        height: 100%;
         background: hsl(0, 0%, 100%);
+      }
+
+      #abstract-mobile{
+        display:none;
+      }
+
+      @media only screen and (max-width: 600px) {
+        #sketch{
+          width: 95vmin;
+          height: 95vmin;
+        }
+
+        #abstract-mobile{
+          display: block;
+          padding: 16px;
+        }
       }
     </style>
   </head>
@@ -68,6 +95,21 @@
       <a href="https://vilva.io/blog/sketch-2-spinning-webs/">Process + Code here</a>
     </p>
     <div id="sketch"></div>
+    <p id="abstract-mobile">
+      A spider recently installed on my yard. She spun a beautiful web in the
+      corner of a gazebo here, every day the wind would eventually destroy the
+      web, and every day she would spin it again, always the same design but
+      with slight differences.
+      <br />
+      <br />
+      The same thing happens here.
+      <br />
+      <br />
+      Every time you refresh, the wind sweeps away your web and the spider spins
+      it again.
+      <br /><br />
+      <a href="https://vilva.io/blog/sketch-2-spinning-webs/">Process + Code here</a>
+    </p>
     <script type="module" src="./generator.js"></script>
   </body>
 </html>
